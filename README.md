@@ -1,2 +1,2 @@
 # WebMapping
-GEOG 492
+GEOG 492, University of Oregon
