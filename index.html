@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Texas Zone Projection Map</title>
+    <!-- linking to page that allows for the texas shaped favicon to be shown in the browser tab-->
+    <link href="data:image/x-icon;base64,AAABAAEAEBAAAAEACABoBQAAFgAAACgAAAAQAAAAIAAAAAEACAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAAAAubu7AAUFlwDI0MkA5N7hALzCwAACAJgAAwCYAAAFlQC4u7kA3+PhAAAAmwADAJsAx8rJAAQAowAAAJ4AAQCeAKurqwAUD5YAAQCZAAAClwDOy9AAxMfDAAEAnAC8wcAAwsTEAAICkgAOCJoABAGbAAEAnwADBJUAAACaAAQAnwAFApoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAAAACQ8SFgAAAAAAAAAAAAAACQ8TDwkAAAAAAAAAAAAAAAQcGgINAAAAAAAAAAAAAAAPHBAOGw0AAAAAAAAJHAUVHBwPDAsIDQkAAAAJHBwcHBwcIB8XBh0PAAAACRwcHBwcHBwHIRQeDwAAAxwcHBwcHBwcHBwcHBwAAAkBAQEBHBwcHBwcHBwcAAAAAAAAARwcHBwcDw8cEQAAAAAAAAEcHBwJCRkBGAAAAAAAAAABHBwPCQAAAAAAAAAAAAAAARwcDwkAAAAAAAAAAAAAAAEJCQkJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/fAAD/DwAA/g8AAP4PAAD+BwAA4AEAAMABAADAAQAAgAEAAIABAAD4AQAA+AMAAPg/AAD4PwAA+D8AAP//AAA=" rel="icon" type="image/x-icon">
+    <!-- linking bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
+    <!-- linking mapbox -->
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css' rel='stylesheet' />
+    <!-- linking search box mapbox api-->
+    <script id="search-js" defer src="https://api.mapbox.com/search-js/v1.1.0/web.js"></script> 
+ 
+  <style>
+/* styling components defined below, but also linked above in the head section as css and js */
+
+#map { 
+  position:absolute; 
+  top:0; 
+  bottom:0; 
+  width:100%; } 
+
+/* styling for navigation bar, calling "sidenav"  */
+.sidenav {
+height: 100%;
+  width: 300px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #fff;
+  overflow-x: hidden;
+}
+
+/* for links in sidenav  */
+.sidenav a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 20px;
+  color: #000000;
+  background-color: #ddd;
+  display: block;
+  transition: 0.3s;
+}
+
+/* for hovering over sidenav links */
+.sidenav a:hover {
+  background-color: #fff;
+  color: black;
+}
+
+/* for information box */
+.map-overlay {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #fff;
+  margin-right: 20px;
+  font-family: Arial, sans-serif;
+  overflow: auto;
+  border-radius: 3px;
+}
+#features {
+  top: 0;
+  height: 100px;
+  margin-top: 75px;
+  width: 250px;
+}
+
+/* for legend elements */
+#legend {
+  padding: 10px;
+  box-shadow: 0 1px 2px rgba(0 0 0 0.1);
+  line-height: 18px;
+  height: 150px;
+  margin-bottom: 20px;
+  width: 150px;
+}
+.legend-key {
+  display: inline-block;
+  border-radius: 20%;
+  width: 10px;
+  height: 10px;
+  margin-right: 5px;
+}
+
+/* all other basic stylings, used for the legend and information box */
+body {
+        margin: 0;
+        padding: 0;
+      }
+
+      h2,
+      h3 {
+        margin: 10px;
+        font-size: 18px;
+      }
+
+      h3 {
+        font-size: 16px;
+      }
+
+      p {
+        margin: 10px;
+      }
+
+  </style>
+  </head>
+  <body>
+
+<div class="sidenav"> <!-- navigation bar and link/text within -->
+  <a href="https://tpwd.texas.gov/publications/pwdpubs/media/pwd_mp_e0100_1070af_08.pdf" target="_blank"><h2>Click here for State Plane Zones Official Map</h2></a>
+  <p>The state of Texas has a “Texas State Coordinate System” with 5 defined zones: <em>TX-North, TX-North Central, TX-Central, TX-South Central, and TX-South.</em> <p>These distinct zones refer to the coordinate system that should be utilized to ensure the most accuracy.</p> <p>This choropleth map shows each overall zone, sorted by color, and the counties within them.</p> <p>The purpose of this page is to allow a GIS user to easily find the proper zone designation for a given area, establishing which Texas projection zone should be used. The overall map should not be used for visual accuracy, as it only uses one projection zone method for the whole country.</p> <p> Refer to the right side of this webpage for the legend as well as an information box displaying various important attributes, by county.</p>
+  <a></a> <!-- doesn't do anything, just acting as a divider with the stylings of a sidenavbar link -->
+  <p><h3>Created by: Arden Culver</h3></p>
+  <p><h3>University of Oregon, GEOG 492</h3></p>
+</div>
+
+<div id='map'></div> <!-- map -->
+
+<div class="map-overlay" id="features"> <!-- information box with features element used as the data to be displayed -->
+  <div id="pd"><p>Hover over any area within Texas or use the search bar to locate your POI.</p></div>
+</div>
+
+<div class="map-overlay" id="legend"><p><strong>Legend</strong></p></div> <!-- legend -->
+
+  <script>
+    
+     const mapboxAccessToken = 'pk.eyJ1IjoiYXJkN24iLCJhIjoiY205MDRrdWpyMDN3djJrcHFvZ3AwdTYzdiJ9.q1MmlJOwhFlbNskU7YCtmQ'; // define the term so can input it quickly when needed
+
+     var map = new mapboxgl.Map({ // creating the map
+         container: 'map', // container id as defined
+         accessToken: mapboxAccessToken, 
+         center: [-100, 31.3], // central Texas
+         zoom: 5.6, // starting zoom level based on size of the state of TX
+         maxZoom: 9, // able to zoom in to the county level
+         minZoom: 5.5, // unable to zoom out past this range, user is still able to scroll to other regions of map
+         style: 'mapbox://styles/ard7n/cmbjmhynk00ey01r7a9xdamt4', // attaches mapbox style and  data
+
+     }); 
+     map.on('load', () => { // everything within this argument begins loading into the webpage when it first opens
+
+      map.getCanvas().style.cursor = 'default'; // changes the cursor from the grabbing hand to a selectable style cursor
+
+      const layers = [ // names of the 5 zones as defined in the original mapbox data style
+      'North',
+      'North Central',
+      'Central',
+      'South Central',
+      'South'
+    ]; 
+      const colors = [ // color codes of the 5 zones as defined in the original mapbox data style
+      '#c169ec',
+      '#95ec69',
+      '#ecdd69',
+      '#ea9f43',
+      '#ec7f69'
+    ]; 
+
+    const legend = document.getElementById('legend'); // forming the legend using the colors and layers attributes defined above
+
+layers.forEach((layer, i) => {
+  const color = colors[i]; // legend colors will use the above defined "colors"
+  const item = document.createElement('div');
+  const key = document.createElement('span');
+  key.className = 'legend-key';
+  key.style.backgroundColor = color;
+// creating elements to be used below in legend display
+
+  const value = document.createElement('span');
+  value.innerHTML = `${layer}`;
+  item.appendChild(key);
+  item.appendChild(value);
+  legend.appendChild(item);
+}); // connecting the created elements for legend to one another so that the results will display
+
+map.on('mousemove', (event) => { // determining the response when user hovers over a defined polygon
+  const Zones = map.queryRenderedFeatures(event.point, { // creating the "Zones" object to be used when referring directly to data attributes below (county name, utm, etc)
+    layers: ['choropleth-fill'] // name of the layer within the mapbox style
+  });
+  document.getElementById('pd').innerHTML = Zones.length //information box will return the elements: county name, zone name, fips code, utm zone as defined below
+    ? `<h3><strong>${Zones[0].properties.COUNTY_NAME} County</strong></h3> 
+    <p>Zone: <strong>${Zones[0].properties.Zone_Name}</strong> </p>  
+    <p>FIPS: <strong>${Zones[0].properties.FIPS}</strong> UTM: <strong>${Zones[0].properties.UTM}</strong></p>` 
+    : `<p>Hover over any area within Texas or use the search bar to locate your POI.</p>`; // this message will display when no county is being hovered over
+}); 
+}); // end of "on load" section
+
+// creating the search box, ensuring that it is connected to and works with the map
+ window.addEventListener('load', () => {
+        const searchBox = new MapboxSearchBox();
+        searchBox.accessToken = mapboxAccessToken;
+        searchBox.options = {
+            types: 'poi,address,postcode,district,place,locality,neighborhood,street', // results and suggestions will be in these location types
+            proximity: [-100,32] // suggested results will be based on the central TX location, as opposed to results based on the whole world
+        };
+        searchBox.marker = true; // places marker on searched location
+        searchBox.mapboxgl = mapboxgl;
+        searchBox.componentOptions = { allowReverse: true, flipCoordinates: true }; // will still work if the user inputs coordinates instead of text
+        map.addControl(searchBox); // adds the search box to the map element
+    });
+
+
+     </script>
+  </body>
+</html>
+
+
